@@ -6,21 +6,25 @@
 
 #include <iostream>
 #include <fstream>
+using std::cout;
+using std::endl;
+using std::ifstream;
+using std::string;
 
 const int ARRAY_SIZE = 8;
 
 void displayArray(char *array) {
   for (int i = 0; i < ARRAY_SIZE; i++) {
-    std::cout << array[i];
+    cout << array[i];
   }
-  std::cout << std::endl;
+  cout << endl;
 }
 
 int main() {
   char accum[ARRAY_SIZE];
   char element;
-  std::ifstream inFile;
-  std::string fileName = "Data.txt";
+  ifstream inFile;
+  string fileName = "Data.txt";
 
   inFile.open(fileName);
 
@@ -29,7 +33,7 @@ int main() {
     inFile >> accum[i];
   }
 
-  // Output the array elements
+  // Output the original array elements
   displayArray(accum);
 
   while (inFile >> element && element != 'S') {
@@ -39,6 +43,8 @@ int main() {
         accum[i + 1] = accum[i];
       }
       accum[0] = 'Z';
+      // Output the array elements when 'R' is read
+      displayArray(accum);
     }
 
     // If the next char read is an 'L'
@@ -47,6 +53,8 @@ int main() {
         accum[i] = accum[i + 1];
       }
       accum[7] = 'Z';
+      // Output the array elements when 'L' is read
+      displayArray(accum);
     }
 
     // If the next char read is an 'A'
@@ -54,11 +62,10 @@ int main() {
       for (int i = (ARRAY_SIZE -2); i >= 0; i--) {
         accum[i + 1] = accum[i];
       }
+      // Output the array elements when 'A' is read
+      displayArray(accum);
     }
   }
-
-  // Output the array elements
-  displayArray(accum);
 
   inFile.close();
   
