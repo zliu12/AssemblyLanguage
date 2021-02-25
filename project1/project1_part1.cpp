@@ -29,7 +29,7 @@ int main() {
   inFile.open(fileName);
 
   // Read 8 chars from "Data.txt" store the 8 chars in array accum[8]
-  for (char i = 0; i < ARRAY_SIZE; i++) {
+  for (int i = 0; i < ARRAY_SIZE; i++) {
     inFile >> accum[i];
   }
 
