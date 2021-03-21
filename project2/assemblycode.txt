@@ -1,0 +1,24 @@
+data
+       byte mulcand 4
+       byte mulplier 3	
+       byte product 0	
+       byte one 1
+       byte minusOne 0	
+       byte saveB 0
+code
+       Afrom one	
+       Comp
+       Bfrom one	
+       Add		
+       Ato minusOne
+ loop: Afrom product	
+       Bfrom mulcand	
+       Add		
+       Ato product
+       Bfrom minusOne	
+       Afrom mulplier	
+       Add		
+       Ato mulplier
+       JNZ loop
+       Afrom product
+       Bfrom product
