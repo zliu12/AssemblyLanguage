@@ -1,0 +1,27 @@
+TITLE Project3 - Sum of All Even Numbers Up To...
+; Zhao Liu
+; This program sums up all even integers up to a given positive integer
+
+INCLUDE Irvine32.inc
+
+
+.data
+limit	dword 8        ; A given positive integer
+
+
+.code
+main PROC
+     mov	eax, 0         ; eax as if counter, starts at 0
+     mov	ebx, 0         ; ebx as if sum, starts at 0
+
+Adding:
+     add	ebx, eax       ; add eax to ebx
+     add	eax, 2         ; add 2 to eax
+     cmp	eax, limit     ; compare eax to limit(eax - limit)
+     jle 	Adding         ; jump to Adding if eax <= limit
+
+call	DumpRegs
+
+exit
+main ENDP
+END main
