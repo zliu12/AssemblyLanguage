@@ -1,0 +1,40 @@
+TITLE Add and Subtract, Version 2         (AddSub2.asm)
+; Project 4 - Palindrom
+; Zhao Liu
+; This program has an array of 15 bytes initialized to the characters "NeverOddOrEven".
+; When executing, the program swaps the first and last characters, then the second and next to last
+; and so on creating the palindrome of the original array.
+
+INCLUDE Irvine32.inc							
+
+.data
+	charArray		BYTE "NeverOddOrEven!"
+
+.code
+main PROC
+	mov	esi, offset charArray		;Set esi point to the first character of charArray
+	mov	edi, offset charArray		;Set edi point to the first character of charArray
+	add	edi, lengthof charArray - 1	;Set edi point to the last character of charArray
+
+Reverse:
+	mov	bl, [edi]					;move the value stored at address edi into bl
+	xchg	bl, [esi]					;exchange the value of bl with the value stored at address esi
+	mov	[edi], bl					;move the value of bl into the adddress pointed by edi	
+	inc	esi						;Set esi point to the next address
+	dec	edi						;Set edi point to the previous address
+	cmp	esi, edi					;compare if esi and edi point to the same address
+	jne	Reverse					;jump to Reverse if esi and edi point to different address
+
+Output:
+	mov	esi, offset charArray		;Set esi point to the first character of charArray
+	mov	ecx,	lengthof charArray		;Set ecx to 15
+OutputCharacter:
+	mov	al, [esi]					;Move the value stored at address esi into al
+	call writeChar					;Invoke print characater function
+	inc	esi						;Set esi point to the next address
+	loop OutputCharacter			;loop again until ecx becomes 0
+
+
+INVOKE ExitProcess, 0				
+main ENDP
+END main
