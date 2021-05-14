@@ -1,0 +1,117 @@
+TITLE Add and Subtract, Version 2         (AddSub2.asm)
+
+;--------------------------------------------------------------------------------------------------------
+; Project 7 - Cracking the safe
+; This program decrypts a string from the input file
+;
+; Name: Zhao Liu
+;
+; Bouns part:
+; 1. Once the decryption loop begins and the first character is decrypted, check if the decrypted 
+;    character is either "L" or "R".
+;
+; 2. If neither, then end the loop, start from step1 with the next key.
+;
+; 3. If it's "L", then once the fourth character is decrypted, check if the decrypted character is "R"
+;    if it's "R", then finish the decryption and print out the result, 
+;    if not, end the loop, start from step1 with the next key.
+;
+; 4. If it's "R", then once the fourth character is decrypted, check if the decrypted character is "L"
+;    if it's "L", then finish the decryption and print out the result, 
+;    if not, end the loop, start from step1 with the next key.
+;
+; 5. We can also create a checkIfDigit procedure and use it in step 3 and step 4, to test the decrypted
+;    character of the second, and the third, and the fifth position of text, if any of these places has a
+;    value which is not a digit (not between 0 - 9 on ASCII), then end the loop, start from step1 with
+;    the next key.
+;--------------------------------------------------------------------------------------------------------
+
+
+INCLUDE Irvine32.inc
+
+BUFMAX = 6
+MAXKEY = 255
+
+.data
+fileName  BYTE "combination.txt", 0
+text      DWORD BUFMAX DUP(0)
+textBytes DWORD ?
+str1      BYTE "text decrypted: ", 0
+str3      BYTE "text encrypted: ", 0
+
+
+.code
+main PROC
+     mov  edx, OFFSET fileName          ; point edx to inputFileName
+     call OpenInputFile
+
+     mov  edx, OFFSET text              ; point edx to text
+     call ReadInputFile                 ; read from input file
+
+     mov  edx, OFFSET str3              ; point edx to str3     
+     call Display                       ; display text read
+
+     mov  eax, 1                        ; Key starts from 1
+L1:     
+     call Decrypt
+     mov  ebx, OFFSET text
+     mov  dl, BYTE PTR [ebx]
+     cmp  dl, 'L'                       ; check if the first character is 'L'
+     je   Equal
+
+     call Decrypt                       ; restore text
+     inc  eax                           ; switch to the next key
+     cmp  eax, MAXKEY
+     jng  L1
+
+Equal:
+     mov  edx, OFFSET str1
+     call Display
+     exit
+main ENDP
+
+; Decrypt procedure
+; Translate the txtRead by XOR each byte with the KEY
+; Receives: EAX = KEY value
+; Returns: nothing
+Decrypt   PROC
+     pushad
+     mov  ecx, textBytes                ; loop counter
+     mov  esi, 0                        ; index 0 in buffer
+L2:
+     xor  text[esi], eax                ; decrypt a byte
+     inc  esi                           ; esi points to next byte
+     loop L2
+     popad
+     ret
+Decrypt   ENDP
+
+; ReadInputFile procedure
+; Read the message from the input file
+; Receives: EDX = points to the text, ECX = holds the max bytes to read, 
+; Returns: nothing
+ReadInputFile  PROC
+    mov  ecx, BUFMAX
+    call ReadFromFile
+    mov  textBytes, eax 
+    ret
+ReadInputFile  ENDP
+
+; Display procedure
+; Display the encrypted or decrypted message.
+; Receives: EDX = points to the message
+; Returns: nothing
+Display   PROC
+     pushad
+     call WriteString
+     mov  edx, OFFSET text              ; display the txtRead
+     call WriteString
+     call Crlf
+     call Crlf
+     popad
+     ret
+Display   ENDP
+
+
+
+END main

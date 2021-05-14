@@ -1,0 +1,62 @@
+TITLE Add and Subtract, Version 2         (AddSub2.asm)
+; Project 5 - Adding Functions to Project 4 Palindrome
+; Zhao Liu
+; This program moves the swapping part of project 4 into a procedure called "reverse" and the output
+; part into another procedure called "display"
+
+INCLUDE Irvine32.inc		
+
+.code
+main PROC
+.data
+	array1 BYTE "NeverOddOrEven!"
+	array2 BYTE "WasItACarOrACatISaw?", 0dh, 0ah
+.code
+	MOV esi, offset array1
+	MOV ebx, offset array1 + lengthof array1 - 1
+	CALL reverse
+	MOV esi, offset array1
+	MOV ebx, offset array1 + lengthof array1 - 1
+	CALL display
+	
+	MOV esi, offset array2
+	MOV ebx, offset array2 + lengthof array2 - 1
+	CALL reverse
+	MOV esi, offset array2
+	MOV ebx, offset array2 + lengthof array2 - 1
+	CALL display
+
+INVOKE ExitProcess, 0				
+main ENDP
+
+; reverse
+; Procedure reverses the order of elements in the array
+; Receives: ESI = the array offset, EBX = the number of elements in the array
+; Returns: the array that has elements in reversed order
+reverse	PROC
+Swap:
+	MOV al, [ebx]				; move the value of [ebx] into al
+	XCHG al, [esi]				; exchange the value in al with [ebx]
+	MOV [ebx], al				; move the value of al into [ebx]
+	INC esi
+	DEC ebx
+	CMP esi, ebx				; check if esi and ebx are the same address or not
+	JLE Swap					; jump to Swap if esi has lower address
+	RET
+reverse ENDP
+
+; display
+; Procedure prints out the elements in the array
+; Receives: ESI = the array offset, EBX = the number of elements in the array
+; Returns: prints out the array content
+display	PROC
+Print:
+	MOV al, [esi]				; move the value of [esi] to al
+	CALL writeChar
+	INC esi
+	CMP esi, ebx				; check if esi and ebx are the same address or not
+	JLE Print					; jump to Print if esi has lower address
+	RET
+display ENDP
+
+END main

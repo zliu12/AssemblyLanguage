@@ -1,0 +1,59 @@
+TITLE Add and Subtract, Version 2         (AddSub2.asm)
+; Project 6 - A MASA Program of your own
+; Zhao Liu
+; This program calculates the sum of numbers in an array
+
+INCLUDE Irvine32.inc
+
+.data
+	array1 DWORD 33, 55, 77, 11, 22, 44, 66
+	array2 DWORD 1, 2, 3, 4, 5, 6, 7
+
+.code
+main PROC
+	MOV esi, OFFSET array2			; pass the address of array1
+	MOV ecx, LENGTHOF array2			; pass the length of array1
+	CALL sumArray
+	CALL writeInt
+
+	CALL Crlf
+	MOV esi, OFFSET array1
+	MOV ecx, LENGTHOF array1
+	CALL findMax
+	CALL writeInt
+
+
+INVOKE ExitProcess, 0				
+main ENDP
+
+; sumArray
+; Procedure finds the sum of numbers in an array
+; Receives: ESI = the array offset, ECX = the number of elements in the array
+; Returns: the sum of array elements
+sumArray	PROC
+	MOV eax, [esi]			; treat eas at the current sum, initialize it to the first number in array
+NextInt:
+	ADD esi, 4			; esi moves to the next 32-bit integer
+	ADD eax, [esi]			; addition
+	LOOP NextInt
+	RET
+sumArray ENDP
+
+; findMax
+; Procedure finds the max number in an array
+; Receives: ESI = the array offset, ECX = the number of elements in the array
+; Returns: the largest value in an array
+findMAx	PROC
+	MOV eax, [esi]			; treat eax as the current max, initialize it to the first number in array
+
+updateMax:
+	CMP eax, [esi]			;
+	JGE nextInt			; compare eax with the next integer if eax is larger than or equal to the current value in esi
+	MOV eax, [esi]			; update eax to the new max integer if eax is smaller than the current value in esi
+
+nextInt:
+	ADD esi, 4			; esi moves to the next 32-bit integer
+	LOOP updateMax			; go to comparison again
+	RET
+findMax ENDP
+END main
