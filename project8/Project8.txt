@@ -1,0 +1,123 @@
+TITLE Add and Subtract, Version 2         (AddSub2.asm)
+
+;--------------------------------------------------------------------------------------------------------
+; Project 8 - Integers And Reals
+; Zhao Liu: 33, 33, 66
+; This program prompts the usr for two integers and outputs the sum, difference, product, quotient and 
+; remainder of the the two. Then prompts the user for two real numbers and outputs the sum, difference,
+; product, quotient of the the two. Use 32 bit float variables
+;--------------------------------------------------------------------------------------------------------
+
+
+INCLUDE Irvine32.inc
+
+
+.data
+msg1           BYTE      "Please enter two integers ", 0
+msg2           BYTE      "Please enter two reals ", 0
+addMsg         BYTE      "Sum is ", 0
+subMsg         BYTE      " Difference is ", 0
+mulMsg         BYTE      " Product is ", 0
+divMsg1        BYTE      " Quotient is ", 0
+divMsg2        BYTE      " Remainder is ", 0
+firstNum       DWORD     ?
+secondNum      DWORD     ?
+firstReal      DWORD     ?
+secondReal     DWORD     ?
+remainder      DWORD     ?
+
+
+.code
+main PROC
+     ; Integer mathematical operations  
+     mov  edx, OFFSET msg1                  
+     call WriteString                   ; Display message 1
+     call Crlf
+
+     ; Read two signed integers
+     call ReadInt
+     mov  firstNum, eax
+     call ReadInt
+     mov  secondNum, eax
+     
+     ; Add two signed integers and display the sum
+     mov  edx, OFFSET addMsg
+     call WriteString              
+     add  eax, firstNum                 ; eax (secondNum) + firstNum
+     call WriteInt 
+
+     ; Subtract two signed integers and display the difference
+     mov  edx, OFFSET subMsg
+     call WriteString
+     mov  eax, firstNum                 
+     sub  eax, secondNum                ; eax (firstNum) - secondNum
+     call WriteInt
+
+     ; Multiply two signed integers and display the sum
+     mov  edx, OFFSET mulMsg
+     call WriteString
+     mov  eax, firstNum
+     mul  secondNum                     ; eax (firstNum) * secondNum
+     call WriteInt
+
+     ; secondNum divides firstNum, display the quotient and the remainder
+     mov  edx, OFFSET divMsg1
+     call WriteString
+     mov  edx, 0
+     mov  eax, firstNum                 
+     div  secondNum                     ; eax (firstNum) / secondNum
+     mov  remainder, edx
+     call WriteInt
+     mov  edx, OFFSET divMsg2
+     call WriteString
+     mov  eax, remainder                       
+     call WriteInt
+     call Crlf
+
+     ; Real number mathematical operations
+     mov  edx, OFFSET msg2
+     call WriteString                   ; Display message 2
+     call Crlf
+
+     ; Read two real numbers
+     call ReadFloat                     ; Input the first real
+     fstp firstReal                     ; Store the fisrt real into firstReal and pop it 
+     call ReadFloat                     ; Input the second real
+     fstp secondReal                    ; Store the second real into secondReal but don't pop it
+
+     ; Add two real numbers and display the sum
+     mov  edx, OFFSET addMsg
+     call WriteString
+     fld  secondReal                    ; st(0) = secondReal
+     fld  firstReal                     ; st(0) = firstReal, st(1) = secondReal
+     fadd st(0), st(1)                  ; st(0) += st(1)
+     call WriteFloat
+
+     ; Subtract two real numbers and display the difference
+     mov  edx, OFFSET subMsg
+     call WriteString
+     fld  secondReal
+     fld  firstReal
+     fsub st(0), st(1)                  ; st(0) -= st(1)
+     call WriteFloat
+
+     ; Multiply two real numbers and display the product
+     mov  edx, OFFSET mulMsg
+     call WriteString
+     fld  secondReal
+     fld  firstReal
+     fmul st(0), st(1)                  ; st(0) *= st(1)
+     call WriteFloat
+
+     ; secondReal divides the firstReal and display the quotient
+     mov  edx, OFFSET divMsg1
+     call WriteString
+     fld  secondReal
+     fld  firstReal
+     fdiv st(0), st(1)                  ; st(0) /= st(1)
+     call WriteFloat
+     call Crlf
+
+     exit
+main ENDP
+END main
